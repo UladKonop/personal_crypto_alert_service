@@ -4,7 +4,7 @@ class PriceMonitoringJob < ApplicationJob
   def perform
     Rails.logger.info "Starting price monitoring job"
     
-    active_alerts = Alert.active.includes(:id)
+    active_alerts = Alert.active
     alerts_by_symbol = active_alerts.group_by(&:symbol)
     
     alerts_by_symbol.each do |symbol, alerts|

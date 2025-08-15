@@ -71,17 +71,12 @@
                   <small class="text-muted">Created <%= time_ago_in_words(alert.created_at) %> ago</small>
                 </p>
               </div>
-              <div class="dropdown">
-                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                  Actions
-                </button>
-                <ul class="dropdown-menu">
-                  <li><%= link_to "View", alert, class: "dropdown-item" %></li>
-                  <li><%= link_to "Edit", edit_alert_path(alert), class: "dropdown-item" %></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><%= link_to "Delete", alert, data: { method: :delete, confirm: "Are you sure?" }, 
-                            class: "dropdown-item text-danger" %></li>
-                </ul>
+              <div class="d-flex gap-1">
+                <%= link_to "View", alert, class: "btn btn-sm btn-outline-primary" %>
+                <%= link_to "Edit", edit_alert_path(alert), class: "btn btn-sm btn-outline-secondary" %>
+                <%= button_to "Delete", alert, method: :delete, 
+                      data: { confirm: "Are you sure?" }, 
+                      class: "btn btn-sm btn-outline-danger" %>
               </div>
             </div>
           </div>
@@ -137,7 +132,8 @@
             </p>
             <div class="d-flex gap-2">
               <%= link_to "Edit", edit_notification_channel_path(channel), class: "btn btn-sm btn-outline-primary" %>
-              <%= link_to "Delete", channel, data: { method: :delete, confirm: "Are you sure?" }, 
+              <%= button_to "Delete", channel, method: :delete, 
+                        data: { confirm: "Are you sure?" }, 
                         class: "btn btn-sm btn-outline-danger" %>
             </div>
           </div>

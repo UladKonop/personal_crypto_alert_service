@@ -56,14 +56,14 @@ class NotificationChannelsController < ApplicationController
     
     # Handle config based on channel type
     config = {}
-    channel_type = params[:notification_channel][:channel_type]
+    channel_type = permitted_params[:channel_type]
     
     case channel_type
     when 'email'
-      email = params[:notification_channel][:email]
+      email = params[:email]
       config = { email: email } if email.present?
     when 'log'
-      log_level = params[:notification_channel][:log_level]
+      log_level = params[:log_level]
       config = { log_level: log_level } if log_level.present?
     end
     

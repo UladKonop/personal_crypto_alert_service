@@ -76,7 +76,7 @@
             <div class="d-flex gap-2">
               <%= form.submit "Update Channel", class: "btn btn-success" %>
               <%= link_to "Cancel", @notification_channel, class: "btn btn-secondary" %>
-              <%= link_to "Delete", @notification_channel, data: { method: :delete, confirm: "Are you sure?" }, 
+              <%= button_to "Delete", @notification_channel, data: { method: :delete, confirm: "Are you sure?" }, 
                         class: "btn btn-outline-danger" %>
             </div>
           </div>

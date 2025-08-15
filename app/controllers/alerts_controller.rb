@@ -66,6 +66,6 @@ class AlertsController < ApplicationController
   end
 
   def alert_params
-    params.require(:alert).permit(:symbol, :threshold_price, :direction, :active)
+    params.require(:alert).permit(:symbol, :threshold_price, :direction, :active, notification_channels: [])
   end
 end
