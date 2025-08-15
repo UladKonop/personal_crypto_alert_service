@@ -6,6 +6,7 @@ class Alert < ApplicationRecord
   validates :threshold_price, presence: true, numericality: { greater_than: 0 }
   validates :direction, presence: true, inclusion: { in: VALID_DIRECTIONS }
   validate :notification_channels_valid
+  validate :symbol_exists_on_binance, if: :symbol_changed?
 
   scope :active, -> { where(active: true) }
   scope :for_symbol, ->(symbol) { where(symbol: symbol) }
@@ -16,7 +17,11 @@ class Alert < ApplicationRecord
   end
 
   def notification_channels_array=(channels)
-    self.notification_channels = Array(channels).join(',')
+    if channels.is_a?(Array)
+      self.notification_channels = channels.join(',')
+    else
+      self.notification_channels = channels
+    end
   end
 
   def triggered_by_price?(current_price)
@@ -43,5 +48,14 @@ class Alert < ApplicationRecord
     if invalid_channels.any?
       errors.add(:notification_channels, "contains invalid channels: #{invalid_channels.join(', ')}")
     end
+  end
+
+  def symbol_exists_on_binance
+    unless BinanceService.symbol_exists?(symbol)
+      errors.add(:symbol, "does not exist on Binance")
+    end
+  rescue => e
+    Rails.logger.error "Error validating symbol #{symbol}: #{e.message}"
+    # Skip validation error if API is unavailable
   end
 end
