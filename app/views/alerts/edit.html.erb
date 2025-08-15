@@ -1,0 +1,103 @@
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="mb-0">✏️ Edit Alert</h3>
+      </div>
+      <div class="card-body">
+        <%= form_with model: @alert, local: true, class: "row g-3" do |form| %>
+          <% if @alert.errors.any? %>
+            <div class="col-12">
+              <div class="alert alert-danger">
+                <h6>Please fix the following errors:</h6>
+                <ul class="mb-0">
+                  <% @alert.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="col-md-6">
+            <%= form.label :symbol, class: "form-label" %>
+            <%= form.text_field :symbol, class: "form-control", placeholder: "BTCUSDT", 
+                              pattern: "[A-Z]+", title: "Use uppercase letters only" %>
+            <div class="form-text">Enter the crypto symbol (e.g., BTCUSDT, ETHUSDT)</div>
+          </div>
+
+          <div class="col-md-6">
+            <%= form.label :threshold_price, "Threshold Price ($)", class: "form-label" %>
+            <%= form.number_field :threshold_price, class: "form-control", 
+                                step: "0.01", min: "0.01", placeholder: "50000.00" %>
+            <div class="form-text">Price that will trigger the alert</div>
+          </div>
+
+          <div class="col-md-6">
+            <%= form.label :direction, class: "form-label" %>
+            <%= form.select :direction, 
+                          options_for_select([
+                            ['Above - Alert when price goes above threshold', 'above'],
+                            ['Below - Alert when price goes below threshold', 'below']
+                          ], @alert.direction), 
+                          { prompt: "Select direction" }, 
+                          { class: "form-select" } %>
+          </div>
+
+          <div class="col-md-6">
+            <%= form.label :active, class: "form-label" %>
+            <div class="form-check">
+              <%= form.check_box :active, class: "form-check-input" %>
+              <%= form.label :active, "Active", class: "form-check-label" %>
+            </div>
+            <div class="form-text">Uncheck to deactivate this alert</div>
+          </div>
+
+          <div class="col-12">
+            <%= form.label :notification_channels, "Notification Channels", class: "form-label" %>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-check">
+                  <%= check_box_tag "alert[notification_channels][]", "email", 
+                                   @alert.notification_channels_array.include?("email"),
+                                   { class: "form-check-input", id: "channel_email" } %>
+                  <%= label_tag "channel_email", "📧 Email", class: "form-check-label" %>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check">
+                  <%= check_box_tag "alert[notification_channels][]", "log", 
+                                   @alert.notification_channels_array.include?("log"),
+                                   { class: "form-check-input", id: "channel_log" } %>
+                  <%= label_tag "channel_log", "📄 Log File", class: "form-check-label" %>
+                </div>
+              </div>
+            </div>
+            <div class="form-text">Select how you want to be notified when the alert triggers</div>
+          </div>
+
+          <div class="col-12">
+            <div class="d-flex gap-2">
+              <%= form.submit "Update Alert", class: "btn btn-primary" %>
+              <%= link_to "Cancel", @alert, class: "btn btn-secondary" %>
+              <%= link_to "Delete", @alert, data: { method: :delete, confirm: "Are you sure?" }, 
+                        class: "btn btn-outline-danger" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Auto-uppercase symbol input
+  const symbolInput = document.querySelector('#alert_symbol');
+  if (symbolInput) {
+    symbolInput.addEventListener('input', function(e) {
+      e.target.value = e.target.value.toUpperCase();
+    });
+  }
+});
+</script>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Personal Crypto Alert Service</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Turbo for handling method: delete and form submissions -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@hotwired/turbo-rails": "https://cdn.skypack.dev/@hotwired/turbo-rails"
+        }
+      }
+    </script>
+    <script type="module">
+      import "@hotwired/turbo-rails"
+    </script>
+    
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    
+    <style>
+      .navbar-brand {
+        font-weight: bold;
+      }
+      .alert-card {
+        border-left: 4px solid #007bff;
+      }
+      .alert-card.inactive {
+        border-left-color: #6c757d;
+        opacity: 0.7;
+      }
+      .channel-card {
+        border-left: 4px solid #28a745;
+      }
+      .channel-card.inactive {
+        border-left-color: #6c757d;
+        opacity: 0.7;
+      }
+      .status-badge {
+        font-size: 0.8em;
+      }
+    </style>
+  </head>
+
+  <body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <%= link_to "Crypto Alert Service", root_path, class: "navbar-brand" %>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <%= link_to "Dashboard", root_path, class: "nav-link" %>
+            </li>
+            <li class="nav-item">
+              <%= link_to "Alerts", alerts_path, class: "nav-link" %>
+            </li>
+            <li class="nav-item">
+              <%= link_to "Notification Channels", notification_channels_path, class: "nav-link" %>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container mt-4">
+      <% if notice %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <%= notice %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      <% end %>
+      
+      <% if alert %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <%= alert %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      <% end %>
+
+      <%= yield %>
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

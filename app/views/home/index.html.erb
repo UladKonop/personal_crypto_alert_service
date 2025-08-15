@@ -1,0 +1,155 @@
+<div class="row">
+  <div class="col-12">
+    <h1 class="mb-4">🚀 Crypto Alert Dashboard</h1>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">📊 Quick Stats</h5>
+        <div class="row text-center">
+          <div class="col-6">
+            <h3 class="text-primary"><%= @alerts.count %></h3>
+            <small class="text-muted">Total Alerts</small>
+          </div>
+          <div class="col-6">
+            <h3 class="text-success"><%= @alerts.where(active: true).count %></h3>
+            <small class="text-muted">Active Alerts</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">🔔 Notification Channels</h5>
+        <div class="row text-center">
+          <div class="col-6">
+            <h3 class="text-info"><%= @notification_channels.count %></h3>
+            <small class="text-muted">Total Channels</small>
+          </div>
+          <div class="col-6">
+            <h3 class="text-success"><%= @notification_channels.where(active: true).count %></h3>
+            <small class="text-muted">Active Channels</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="d-flex justify-content-between align-items-center">
+      <h3>🎯 Recent Alerts</h3>
+      <%= link_to "Create New Alert", new_alert_path, class: "btn btn-primary" %>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <% if @alerts.any? %>
+    <% @alerts.limit(5).each do |alert| %>
+      <div class="col-md-6 mb-3">
+        <div class="card alert-card <%= 'inactive' unless alert.active %>">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h5 class="card-title">
+                  <%= alert.symbol %>
+                  <span class="badge <%= alert.active? ? 'bg-success' : 'bg-secondary' %> status-badge">
+                    <%= alert.active? ? 'Active' : 'Inactive' %>
+                  </span>
+                </h5>
+                <p class="card-text">
+                  <strong>Trigger:</strong> <%= alert.direction.capitalize %> $<%= alert.threshold_price %><br>
+                  <strong>Channels:</strong> <%= alert.notification_channels_array.join(', ') %><br>
+                  <small class="text-muted">Created <%= time_ago_in_words(alert.created_at) %> ago</small>
+                </p>
+              </div>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                  Actions
+                </button>
+                <ul class="dropdown-menu">
+                  <li><%= link_to "View", alert, class: "dropdown-item" %></li>
+                  <li><%= link_to "Edit", edit_alert_path(alert), class: "dropdown-item" %></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><%= link_to "Delete", alert, data: { method: :delete, confirm: "Are you sure?" }, 
+                            class: "dropdown-item text-danger" %></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="col-12">
+      <div class="text-center py-5">
+        <h4 class="text-muted">No alerts created yet</h4>
+        <p class="text-muted">Create your first crypto price alert to get started!</p>
+        <%= link_to "Create Your First Alert", new_alert_path, class: "btn btn-primary btn-lg" %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<% if @alerts.count > 5 %>
+  <div class="row mt-3">
+    <div class="col-12 text-center">
+      <%= link_to "View All Alerts (#{@alerts.count})", alerts_path, class: "btn btn-outline-primary" %>
+    </div>
+  </div>
+<% end %>
+
+<div class="row mt-5">
+  <div class="col-12">
+    <div class="d-flex justify-content-between align-items-center">
+      <h3>🔔 Notification Channels</h3>
+      <%= link_to "Add Channel", new_notification_channel_path, class: "btn btn-success" %>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <% if @notification_channels.any? %>
+    <% @notification_channels.each do |channel| %>
+      <div class="col-md-4 mb-3">
+        <div class="card channel-card <%= 'inactive' unless channel.active %>">
+          <div class="card-body">
+            <h6 class="card-title">
+              <%= channel.channel_type.titleize %>
+              <span class="badge <%= channel.active? ? 'bg-success' : 'bg-secondary' %> status-badge">
+                <%= channel.active? ? 'Active' : 'Inactive' %>
+              </span>
+            </h6>
+            <p class="card-text">
+              <% if channel.channel_type == 'email' %>
+                📧 <%= channel.config_hash['email'] %>
+              <% elsif channel.channel_type == 'log' %>
+                📄 Log Level: <%= channel.config_hash['log_level'] || 'info' %>
+              <% end %>
+            </p>
+            <div class="d-flex gap-2">
+              <%= link_to "Edit", edit_notification_channel_path(channel), class: "btn btn-sm btn-outline-primary" %>
+              <%= link_to "Delete", channel, data: { method: :delete, confirm: "Are you sure?" }, 
+                        class: "btn btn-sm btn-outline-danger" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="col-12">
+      <div class="text-center py-3">
+        <p class="text-muted">No notification channels configured</p>
+        <%= link_to "Add Your First Channel", new_notification_channel_path, class: "btn btn-success" %>
+      </div>
+    </div>
+  <% end %>
+</div>

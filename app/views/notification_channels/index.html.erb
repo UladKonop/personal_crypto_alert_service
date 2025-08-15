@@ -1,0 +1,80 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>🔔 Notification Channels</h1>
+  <%= link_to "Add New Channel", new_notification_channel_path, class: "btn btn-success" %>
+</div>
+
+<% if @notification_channels.any? %>
+  <div class="row">
+    <% @notification_channels.each do |channel| %>
+      <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card channel-card <%= 'inactive' unless channel.active %>">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <h5 class="card-title mb-0">
+                <%= channel.channel_type == 'email' ? '📧' : '📄' %> 
+                <%= channel.channel_type.titleize %>
+              </h5>
+              <span class="badge <%= channel.active? ? 'bg-success' : 'bg-secondary' %> status-badge">
+                <%= channel.active? ? 'Active' : 'Inactive' %>
+              </span>
+            </div>
+            
+            <div class="mb-3">
+              <% if channel.channel_type == 'email' %>
+                <strong>Email:</strong><br>
+                <%= channel.config_hash['email'] %>
+              <% elsif channel.channel_type == 'log' %>
+                <strong>Log Level:</strong><br>
+                <%= (channel.config_hash['log_level'] || 'info').titleize %>
+              <% end %>
+            </div>
+            
+            <small class="text-muted d-block mb-3">
+              Created <%= time_ago_in_words(channel.created_at) %> ago
+            </small>
+            
+            <div class="d-flex gap-2">
+              <%= link_to "View", channel, class: "btn btn-sm btn-outline-primary" %>
+              <%= link_to "Edit", edit_notification_channel_path(channel), class: "btn btn-sm btn-outline-secondary" %>
+              <%= link_to "Delete", channel, data: { method: :delete, confirm: "Are you sure?" }, 
+                        class: "btn btn-sm btn-outline-danger" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="text-center py-5">
+    <div class="mb-4">
+      <i class="display-1">🔔</i>
+    </div>
+    <h3 class="text-muted">No notification channels configured</h3>
+    <p class="text-muted">Add notification channels to receive alerts when your price thresholds are crossed!</p>
+    <%= link_to "Add Your First Channel", new_notification_channel_path, class: "btn btn-success btn-lg" %>
+  </div>
+<% end %>
+
+<div class="mt-5">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">📖 About Notification Channels</h5>
+      <div class="row">
+        <div class="col-md-6">
+          <h6>📧 Email Notifications</h6>
+          <p class="small text-muted">
+            Send alert emails to specified email addresses when price thresholds are crossed.
+            Perfect for important alerts that you don't want to miss.
+          </p>
+        </div>
+        <div class="col-md-6">
+          <h6>📄 Log File Notifications</h6>
+          <p class="small text-muted">
+            Write alert messages to the application log files with configurable log levels.
+            Great for debugging and keeping a record of all alerts.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,107 @@
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="mb-0">🔔 Add Notification Channel</h3>
+      </div>
+      <div class="card-body">
+        <%= form_with model: @notification_channel, local: true, class: "row g-3" do |form| %>
+          <% if @notification_channel.errors.any? %>
+            <div class="col-12">
+              <div class="alert alert-danger">
+                <h6>Please fix the following errors:</h6>
+                <ul class="mb-0">
+                  <% @notification_channel.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="col-12">
+            <%= form.label :channel_type, "Channel Type", class: "form-label" %>
+            <%= form.select :channel_type, 
+                          options_for_select([
+                            ['📧 Email Notification', 'email'],
+                            ['📄 Log File Notification', 'log']
+                          ], @notification_channel.channel_type), 
+                          { prompt: "Select notification type" }, 
+                          { class: "form-select", onchange: "toggleChannelConfig()" } %>
+            <div class="form-text">Choose how you want to receive notifications</div>
+          </div>
+
+          <!-- Email Configuration -->
+          <div id="email-config" class="col-12" style="display: none;">
+            <div class="card bg-light">
+              <div class="card-body">
+                <h6 class="card-title">📧 Email Configuration</h6>
+                <%= label_tag :email, "Email Address", class: "form-label" %>
+                <%= email_field_tag :email, "", class: "form-control", placeholder: "your@email.com" %>
+                <div class="form-text">Enter the email address where you want to receive alerts</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Log Configuration -->
+          <div id="log-config" class="col-12" style="display: none;">
+            <div class="card bg-light">
+              <div class="card-body">
+                <h6 class="card-title">📄 Log Configuration</h6>
+                <%= label_tag :log_level, "Log Level", class: "form-label" %>
+                <%= select_tag :log_level, 
+                              options_for_select([
+                                ['Debug', 'debug'],
+                                ['Info (recommended)', 'info'],
+                                ['Warning', 'warn'],
+                                ['Error', 'error']
+                              ], 'info'), 
+                              { class: "form-select" } %>
+                <div class="form-text">Choose the log level for alert messages</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <%= form.label :active, class: "form-label" %>
+            <div class="form-check">
+              <%= form.check_box :active, class: "form-check-input", checked: true %>
+              <%= form.label :active, "Active", class: "form-check-label" %>
+            </div>
+            <div class="form-text">Uncheck to create as inactive</div>
+          </div>
+
+          <div class="col-12">
+            <div class="d-flex gap-2">
+              <%= form.submit "Create Channel", class: "btn btn-success" %>
+              <%= link_to "Cancel", notification_channels_path, class: "btn btn-secondary" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleChannelConfig() {
+  const channelType = document.querySelector('#notification_channel_channel_type').value;
+  const emailConfig = document.querySelector('#email-config');
+  const logConfig = document.querySelector('#log-config');
+  
+  // Hide all configs
+  emailConfig.style.display = 'none';
+  logConfig.style.display = 'none';
+  
+  // Show relevant config
+  if (channelType === 'email') {
+    emailConfig.style.display = 'block';
+  } else if (channelType === 'log') {
+    logConfig.style.display = 'block';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  toggleChannelConfig();
+});
+</script>
